@@ -1,8 +1,7 @@
-from collections import deque
 from functools import update_wrapper
 from inspect import signature
 from timeit import default_timer
-from typing import Any, Callable, ClassVar, Deque, Dict, Generator, Tuple, Sequence
+from typing import Any, Callable, ClassVar, Dict, Generator, List, Sequence, Tuple
 
 
 class Timer:
@@ -14,7 +13,7 @@ class Timer:
     TODO 批量运行加入返回值打印功能（缩写：prt）
 
     '''
-    funcs: ClassVar[Deque[Callable]] = deque() # 存储被装饰过的函数
+    funcs: ClassVar[List[Callable]] = [] # 存储被装饰过的函数
     times: ClassVar[Dict[str, float]] = {} # 记录函数及其对应运行所耗时间  规范：函数名 : 耗时
 
 
