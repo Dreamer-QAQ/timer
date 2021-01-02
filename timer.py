@@ -1,7 +1,8 @@
+from collections.abc import Callable, Generator, Sequence
 from functools import update_wrapper
 from inspect import signature
 from timeit import default_timer
-from typing import Any, Callable, ClassVar, Dict, Generator, List, Sequence, Tuple
+from typing import Any, ClassVar
 
 
 class Timer:
@@ -13,11 +14,11 @@ class Timer:
     TODO 批量运行加入返回值打印功能（缩写：prt）
 
     '''
-    funcs: ClassVar[List[Callable]] = [] # 存储被装饰过的函数
-    times: ClassVar[Dict[str, float]] = {} # 记录函数及其对应运行所耗时间  规范：函数名 : 耗时
+    funcs: ClassVar[list[Callable[..., Any]]] = [] # 存储被装饰过的函数
+    times: ClassVar[dict[str, float]] = {} # 记录函数及其对应运行所耗时间  规范：函数名 : 耗时
 
 
-    def __init__(self, func: Callable) -> None:
+    def __init__(self, func: Callable[..., Any]) -> None:
         '''
         将该类实例自身的属性替换为func的属性后添入funcs类变量中
         '''
@@ -25,7 +26,7 @@ class Timer:
         self.funcs.append(self)
 
 
-    def __call__(self, *args, **kwargs) -> Callable:
+    def __call__(self, *args: tuple[Any], **kwargs: dict[str, dict[Any, Any]]) -> Any:
         '''
         运行原函数并计算耗时，后将计时数据添入times类变量中，并返回结果 \n
         注：可能是mypy的bug，mypy并不能检测到 __wrapped__ 的存在，故需要 “ # type: ignore ” 忽略该行类型检测 \n
@@ -64,7 +65,7 @@ class Timer:
 
 
     @classmethod
-    def run1arg(cls, *args, **kwargs) -> None:
+    def run1arg(cls, *args: tuple[Any], **kwargs: dict[str, dict[Any, Any]]) -> None:
         '''
         统一传入一套参数运行funcs类变量中的函数
         '''
@@ -73,7 +74,7 @@ class Timer:
 
 
     @classmethod
-    def report(cls) -> Generator[Tuple[str, float, float], None, None]:
+    def report(cls) -> Generator[tuple[str, float, float], None, None]:
         '''
         返回按 (函数名，耗时，该耗时占所有已运行函数总耗时的百分比) 封装的生成器
         '''
